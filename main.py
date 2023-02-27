@@ -27,6 +27,11 @@ colors = {0: (204, 192, 179),
           512: (237, 200, 80),
           1024: (237, 197, 63),
           2048: (237, 194, 46),
+          4096: (0, 0, 0),
+          8192: (0, 0, 0),
+          16384: (0, 0, 0),
+          32768: (0, 0, 0),
+          65536: (0, 0, 0),
           'light text': (249, 246, 242),
           'dark text': (119, 110, 101),
           'bg': (187, 173, 160)}
@@ -82,6 +87,68 @@ def draw_field():
                 text_sec = y + (108 - font_y) / 2
                 screen.blit(text, (text_fir, text_sec))
 
+def move_right(field):
+    for row in field:
+        while 0 in row:
+            row.remove(0)
+        while len(row) != 4:
+            row.insert(0, 0)
+    for i in range(4):
+        for j in range(3, 0, -1):
+            if field[i][j] == field[i][j-1] and field[i][j] != 0:
+                field[i][j]*=2
+                field[i].pop(j-1)
+                field[i].insert(0, 0)
+    return field
+
+def move_left(field):
+    for row in field:
+        while 0 in row:
+            row.remove(0)
+        while len(row) != 4:
+            row.append(0)
+    for i in range(4):
+        for j in range(3):
+            if field[i][j] == field[i][j+1] and field[i][j] != 0:
+                field[i][j] *= 2
+                field[i].pop(j+1)
+                field[i].append(0)
+    return field
+
+def move_up(field):
+    for j in range(4):
+        column = []
+        for i in range(4):
+            if field[i][j] != 0:
+                column.append(field[i][j])
+        while len(column) != 4:
+            column.append(0)
+        for i in range(3):
+            if column[i] == column [i+1] and column[i] != 0:
+                column[i] *= 2
+                column.pop(i+1)
+                column.append(0)
+        for i in range(4):
+            field[i][j] = column[i]
+    return field
+
+def move_down(field):
+    for j in range(4):
+        column = []
+        for i in range(4):
+            if field[i][j] != 0:
+                column.append(field[i][j])
+        while len(column) != 4:
+            column.insert(0, 0)
+        for i in range(3, 0, -1):
+            if column[i] == column[i - 1] and column[i] != 0:
+                column[i] *= 2
+                column.pop(i - 1)
+                column.insert(0, 0)
+        for i in range(4):
+            field[i][j] = column[i]
+    return field
+
 #
 def draw_objects():
     pass
@@ -100,6 +167,14 @@ while play:
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                field = move_right(field)
+            elif event.key == pygame.K_LEFT:
+                field = move_left(field)
+            elif event.key == pygame.K_UP:
+                field = move_up(field)
+            elif event.key == pygame.K_DOWN:
+                field = move_down(field)
             check_empty(field)
             if len(empty_cell) > 0:
                 add_random_number_in_empty_cell(field)
