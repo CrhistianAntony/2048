@@ -1,5 +1,6 @@
 import pygame
 from random import *
+import sys
 
 pygame.init()
 width = 550
@@ -10,7 +11,10 @@ timer = pygame.time.Clock()
 fps = 60
 font = pygame.font.SysFont('bahnschrift', 36)
 
+title = pygame.Rect(0, 0, 550, 150)
+
 # Цвета
+WHITE = (255, 255, 255)
 colors = {0: (204, 192, 179),
           2: (238, 228, 218),
           4: (237, 224, 200),
@@ -79,7 +83,9 @@ while play:
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            play = False
+            pygame.quit()
+            sys.exit(0)
+        elif event.type == pygame.KEYDOWN:
+            pygame.draw.rect(screen, WHITE, title)
 
     pygame.display.update()
-pygame.quit()
