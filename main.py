@@ -80,12 +80,20 @@ while play:
     screen.fill((250,248,239))
     draw_field()
     draw_objects()
+    pygame.draw.rect(screen, (250, 248, 239), title)
+    for row in range(4):
+        for column in range(4):
+            x = column * 108 + (column + 1) * 10 + 35
+            y = row * 108 + (row + 1) * 10 + 150 + 35
+            pygame.draw.rect(screen, colors[0], (x, y, 105, 105), 0, 2)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
-            pygame.draw.rect(screen, WHITE, title)
-
+            check_empty(field)
+            if len(empty_cell) > 0:
+                add_random_number_in_empty_cell(field)
+                printing(field)
     pygame.display.update()
