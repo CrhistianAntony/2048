@@ -66,8 +66,21 @@ field = [
 
 #
 def draw_field():
-    pygame.draw.rect(screen, colors['bg'], [25, 175, 500, 500], 0, 7)
-    pass
+    pygame.draw.rect(screen, WHITE, title)
+    sfont = pygame.font.SysFont('bahnschrift', 50)
+    printing(field)
+    for row in range(4):
+        for column in range(4):
+            value = field[row][column]
+            text = font.render(f'{value}', True, colors['dark text'])
+            x = column * 108 + (column + 1) * 10 + 35
+            y = row * 108 + (row + 1) * 10 + 150 + 35
+            pygame.draw.rect(screen, colors[value], (x, y, 108, 108))
+            if value != 0:
+                font_x, font_y = text.get_size()
+                text_fir = x + (108 - font_x) / 2
+                text_sec = y + (108 - font_y) / 2
+                screen.blit(text, (text_fir, text_sec))
 
 #
 def draw_objects():
@@ -81,12 +94,6 @@ while play:
     draw_field()
     draw_objects()
     pygame.draw.rect(screen, (250, 248, 239), title)
-
-    for row in range(4):
-        for column in range(4):
-            x = column * 108 + (column + 1) * 10 + 35
-            y = row * 108 + (row + 1) * 10 + 150 + 35
-            pygame.draw.rect(screen, colors[0], (x, y, 105, 105), 0, 2)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
