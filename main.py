@@ -81,6 +81,7 @@ while play:
     draw_field()
     draw_objects()
     pygame.draw.rect(screen, (250, 248, 239), title)
+
     for row in range(4):
         for column in range(4):
             x = column * 108 + (column + 1) * 10 + 35
