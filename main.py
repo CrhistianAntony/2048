@@ -75,13 +75,10 @@ field = [
     [0, 0, 0, 0],
     [0, 0, 0, 0],
     [0, 0, 0, 0],
-    [0, 0, 0, 0],
+    [0, 0, 0, 0]
 ]
 
 score = 0
-
-before_start(field)
-before_start(field)
 
 # Отрисовка поля
 def draw_field():
@@ -184,13 +181,18 @@ def game_loss():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_TAB:
+                    game_start()
         screen.fill(colors['bg'])
         screen.blit(loss, (60, 75))
         sfont = pygame.font.SysFont('bahnschrift', 35)
         textscore = sfont.render('Очки:', True, (0, 0, 0))
+        textrestart = sfont.render('Для рестарта игры нажми TAB', True, (0, 0, 0))
         score_value = sfont.render(f'{score}', True, (0, 0, 0))
         screen.blit(textscore, (220, 175))
         screen.blit(score_value, (225, 217))
+        screen.blit(textrestart, (35, 300))
         pygame.display.update()
 
 def movetrue(field):
@@ -201,36 +203,44 @@ def movetrue(field):
     return field[3][3] == field[2][3] or field[3][3] == field[3][2]
 
 # Игровой цикл
-while len(empty_cell) > 0 or movetrue(field):
-    timer.tick(fps)
-    screen.fill((250,248,239))
-    pygame.draw.rect(screen, colors['bg'], [25, 175, 500, 500], 0, 7)
-    draw_field()
-    pygame.draw.rect(screen, colors['bg'], title, 0, 17)
-    font = pygame.font.SysFont('bahnschrift', 35)
-    textscore = font.render('Очки: ', True, colors['light text'])
-    score_value = font.render(f'{score}', True, colors['light text'])
-    screen.blit(textscore, (35, 45))
-    screen.blit(score_value, (130, 47))
+def game_start():
+    global score, field
+    score = 0
+    field = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+    before_start(field)
+    before_start(field)
+    while len(empty_cell) > 0 or movetrue(field):
+        timer.tick(fps)
+        screen.fill((250,248,239))
+        pygame.draw.rect(screen, colors['bg'], [25, 175, 500, 500], 0, 7)
+        draw_field()
+        pygame.draw.rect(screen, colors['bg'], title, 0, 17)
+        font = pygame.font.SysFont('bahnschrift', 35)
+        textscore = font.render('Очки: ', True, colors['light text'])
+        score_value = font.render(f'{score}', True, colors['light text'])
+        screen.blit(textscore, (35, 45))
+        screen.blit(score_value, (130, 47))
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit(0)
-        elif event.type == pygame.KEYDOWN:
-            add_score = 0
-            if event.key == pygame.K_RIGHT:
-                field, add_score = move_right(field)
-            elif event.key == pygame.K_LEFT:
-                field, add_score = move_left(field)
-            elif event.key == pygame.K_UP:
-                field, add_score = move_up(field)
-            elif event.key == pygame.K_DOWN:
-                field, add_score = move_down(field)
-            score += add_score
-            check_empty(field)
-            if len(empty_cell) > 0:
-                add_random_number_in_empty_cell(field)
-                printing(field)
-    pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                add_score = 0
+                if event.key == pygame.K_RIGHT:
+                    field, add_score = move_right(field)
+                elif event.key == pygame.K_LEFT:
+                    field, add_score = move_left(field)
+                elif event.key == pygame.K_UP:
+                    field, add_score = move_up(field)
+                elif event.key == pygame.K_DOWN:
+                    field, add_score = move_down(field)
+                score += add_score
+                check_empty(field)
+                if len(empty_cell) > 0:
+                    add_random_number_in_empty_cell(field)
+                    printing(field)
+        pygame.display.update()
+
+game_start()
 game_loss()
