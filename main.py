@@ -36,12 +36,6 @@ colors = {0: (204, 192, 179),
           'dark text': (119, 110, 101),
           'bg': (187, 173, 160)}
 
-def printing(field): # Печать игрового поля в консоли
-    print('-' * 10)
-    for row in field:
-        print(*row)
-    print('-' * 10)
-
 empty_cell = [] # Список пустых ячеек
 def check_empty(field): # Проверка ячеек поля. Если ячейка пустая, то её номер добавляется в список
     empty_cell.clear()
@@ -84,7 +78,6 @@ score = 0
 def draw_field():
     pygame.draw.rect(screen, WHITE, title)
     font = pygame.font.SysFont('bahnschrift', 50)
-    printing(field)
     for row in range(4):
         for column in range(4):
             value = field[row][column]
@@ -256,7 +249,6 @@ def game_start():
                     check_empty(field)
                     if len(empty_cell) > 0:
                         add_random_number_in_empty_cell(field)
-                        printing(field)
                 field_move = False
         pygame.display.update()
 
