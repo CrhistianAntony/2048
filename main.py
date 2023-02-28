@@ -61,6 +61,15 @@ def add_random_number_in_empty_cell(field): # Добавление 2 или 4 в
     else:
         loss = True
 
+def before_start(field):
+    empty = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    number_cell = choice(empty)
+    number_cell -= 1
+    x, y = number_cell // 4, number_cell % 4
+    generator = [2, 2, 2, 2, 2, 2, 2, 2, 2, 4]
+    field[x][y] = choice(generator)
+    check_empty(field)
+
 # Игровое поле
 field = [
     [0, 0, 0, 0],
@@ -69,10 +78,13 @@ field = [
     [0, 0, 0, 0],
 ]
 
-#
+before_start(field)
+before_start(field)
+
+# Отрисовка поля
 def draw_field():
     pygame.draw.rect(screen, WHITE, title)
-    sfont = pygame.font.SysFont('bahnschrift', 50)
+    font = pygame.font.SysFont('bahnschrift', 50)
     printing(field)
     for row in range(4):
         for column in range(4):
@@ -149,17 +161,32 @@ def move_down(field):
             field[i][j] = column[i]
     return field
 
-#
-def draw_objects():
-    pass
+# Проигрыш
+def game_loss():
+    font = pygame.font.SysFont('bahnschrift', 75)
+    loss = font.render('Ты проиграл!', True, (0, 0, 0))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit(0)
+        screen.fill(colors['bg'])
+        screen.blit(loss, (60, 75))
+        pygame.display.update()
+
+def movetrue(field):
+    for x in range(3):
+        for y in range(3):
+            if field[x][y] == field[x][y+1] or field[x][y] == field[x+1][y]:
+                return True
+    return field[3][3] == field[2][3] or field[3][3] == field[3][2]
 
 # Игровой цикл
-play = True
-while play:
+while len(empty_cell) > 0 or movetrue(field):
     timer.tick(fps)
     screen.fill((250,248,239))
+    pygame.draw.rect(screen, colors['bg'], [25, 175, 500, 500], 0, 7)
     draw_field()
-    draw_objects()
     pygame.draw.rect(screen, (250, 248, 239), title)
 
     for event in pygame.event.get():
@@ -180,3 +207,4 @@ while play:
                 add_random_number_in_empty_cell(field)
                 printing(field)
     pygame.display.update()
+game_loss()
