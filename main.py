@@ -104,6 +104,10 @@ def draw_field():
 
 def move_right(field):
     add_score = 0
+    field_before = [[], [], [], []]
+    for i in range(4):
+        for j in range(4):
+            field_before[i].append(field[i][j])
     for row in field:
         while 0 in row:
             row.remove(0)
@@ -116,10 +120,14 @@ def move_right(field):
                 add_score += field[i][j]
                 field[i].pop(j-1)
                 field[i].insert(0, 0)
-    return field, add_score
+    return field, add_score, not field_before == field
 
 def move_left(field):
     add_score = 0
+    field_before = [[], [], [], []]
+    for i in range(4):
+        for j in range(4):
+            field_before[i].append(field[i][j])
     for row in field:
         while 0 in row:
             row.remove(0)
@@ -132,10 +140,14 @@ def move_left(field):
                 add_score += field[i][j]
                 field[i].pop(j+1)
                 field[i].append(0)
-    return field, add_score
+    return field, add_score, not field_before == field
 
 def move_up(field):
     add_score = 0
+    field_before = [[], [], [], []]
+    for i in range(4):
+        for j in range(4):
+            field_before[i].append(field[i][j])
     for j in range(4):
         column = []
         for i in range(4):
@@ -151,10 +163,14 @@ def move_up(field):
                 column.append(0)
         for i in range(4):
             field[i][j] = column[i]
-    return field, add_score
+    return field, add_score, not field_before == field
 
 def move_down(field):
     add_score = 0
+    field_before = [[], [], [], []]
+    for i in range(4):
+        for j in range(4):
+            field_before[i].append(field[i][j])
     for j in range(4):
         column = []
         for i in range(4):
@@ -170,7 +186,7 @@ def move_down(field):
                 column.insert(0, 0)
         for i in range(4):
             field[i][j] = column[i]
-    return field, add_score
+    return field, add_score, not field_before == field
 
 # Проигрыш
 def game_loss():
@@ -228,18 +244,20 @@ def game_start():
             elif event.type == pygame.KEYDOWN:
                 add_score = 0
                 if event.key == pygame.K_RIGHT:
-                    field, add_score = move_right(field)
+                    field, add_score, field_move = move_right(field)
                 elif event.key == pygame.K_LEFT:
-                    field, add_score = move_left(field)
+                    field, add_score, field_move = move_left(field)
                 elif event.key == pygame.K_UP:
-                    field, add_score = move_up(field)
+                    field, add_score, field_move = move_up(field)
                 elif event.key == pygame.K_DOWN:
-                    field, add_score = move_down(field)
+                    field, add_score, field_move = move_down(field)
                 score += add_score
-                check_empty(field)
-                if len(empty_cell) > 0:
-                    add_random_number_in_empty_cell(field)
-                    printing(field)
+                if field_move:
+                    check_empty(field)
+                    if len(empty_cell) > 0:
+                        add_random_number_in_empty_cell(field)
+                        printing(field)
+                field_move = False
         pygame.display.update()
 
 game_start()
