@@ -11,7 +11,7 @@ timer = pygame.time.Clock()
 fps = 60
 font = pygame.font.SysFont('bahnschrift', 36)
 
-title = pygame.Rect(0, 0, 550, 150)
+title = pygame.Rect(25, 25, 250, 75)
 
 # Цвета
 WHITE = (255, 255, 255)
@@ -89,7 +89,11 @@ def draw_field():
     for row in range(4):
         for column in range(4):
             value = field[row][column]
-            text = font.render(f'{value}', True, colors['dark text'])
+            if value > 4:
+                color = colors['light text']
+            else:
+                color = colors['dark text']
+            text = font.render(f'{value}', True, color)
             x = column * 108 + (column + 1) * 10 + 35
             y = row * 108 + (row + 1) * 10 + 150 + 35
             pygame.draw.rect(screen, colors[value], (x, y, 108, 108))
@@ -187,7 +191,10 @@ while len(empty_cell) > 0 or movetrue(field):
     screen.fill((250,248,239))
     pygame.draw.rect(screen, colors['bg'], [25, 175, 500, 500], 0, 7)
     draw_field()
-    pygame.draw.rect(screen, (250, 248, 239), title)
+    pygame.draw.rect(screen, colors['bg'], title, 0, 17)
+    font = pygame.font.SysFont('bahnschrift', 35)
+    textscore = font.render('Очки: ', True, colors['light text'])
+    screen.blit(textscore, (35, 45))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
