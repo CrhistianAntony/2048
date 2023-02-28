@@ -78,6 +78,8 @@ field = [
     [0, 0, 0, 0],
 ]
 
+score = 0
+
 before_start(field)
 before_start(field)
 
@@ -104,6 +106,7 @@ def draw_field():
                 screen.blit(text, (text_fir, text_sec))
 
 def move_right(field):
+    add_score = 0
     for row in field:
         while 0 in row:
             row.remove(0)
@@ -113,11 +116,13 @@ def move_right(field):
         for j in range(3, 0, -1):
             if field[i][j] == field[i][j-1] and field[i][j] != 0:
                 field[i][j]*=2
+                add_score += field[i][j]
                 field[i].pop(j-1)
                 field[i].insert(0, 0)
-    return field
+    return field, add_score
 
 def move_left(field):
+    add_score = 0
     for row in field:
         while 0 in row:
             row.remove(0)
@@ -127,11 +132,13 @@ def move_left(field):
         for j in range(3):
             if field[i][j] == field[i][j+1] and field[i][j] != 0:
                 field[i][j] *= 2
+                add_score += field[i][j]
                 field[i].pop(j+1)
                 field[i].append(0)
-    return field
+    return field, add_score
 
 def move_up(field):
+    add_score = 0
     for j in range(4):
         column = []
         for i in range(4):
@@ -142,13 +149,15 @@ def move_up(field):
         for i in range(3):
             if column[i] == column [i+1] and column[i] != 0:
                 column[i] *= 2
+                add_score += field[i][j]
                 column.pop(i+1)
                 column.append(0)
         for i in range(4):
             field[i][j] = column[i]
-    return field
+    return field, add_score
 
 def move_down(field):
+    add_score = 0
     for j in range(4):
         column = []
         for i in range(4):
@@ -159,11 +168,12 @@ def move_down(field):
         for i in range(3, 0, -1):
             if column[i] == column[i - 1] and column[i] != 0:
                 column[i] *= 2
+                add_score += field[i][j]
                 column.pop(i - 1)
                 column.insert(0, 0)
         for i in range(4):
             field[i][j] = column[i]
-    return field
+    return field, add_score
 
 # Проигрыш
 def game_loss():
@@ -176,6 +186,11 @@ def game_loss():
                 sys.exit(0)
         screen.fill(colors['bg'])
         screen.blit(loss, (60, 75))
+        sfont = pygame.font.SysFont('bahnschrift', 35)
+        textscore = sfont.render('Очки:', True, (0, 0, 0))
+        score_value = sfont.render(f'{score}', True, (0, 0, 0))
+        screen.blit(textscore, (220, 175))
+        screen.blit(score_value, (225, 217))
         pygame.display.update()
 
 def movetrue(field):
@@ -194,21 +209,25 @@ while len(empty_cell) > 0 or movetrue(field):
     pygame.draw.rect(screen, colors['bg'], title, 0, 17)
     font = pygame.font.SysFont('bahnschrift', 35)
     textscore = font.render('Очки: ', True, colors['light text'])
+    score_value = font.render(f'{score}', True, colors['light text'])
     screen.blit(textscore, (35, 45))
+    screen.blit(score_value, (130, 47))
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
+            add_score = 0
             if event.key == pygame.K_RIGHT:
-                field = move_right(field)
+                field, add_score = move_right(field)
             elif event.key == pygame.K_LEFT:
-                field = move_left(field)
+                field, add_score = move_left(field)
             elif event.key == pygame.K_UP:
-                field = move_up(field)
+                field, add_score = move_up(field)
             elif event.key == pygame.K_DOWN:
-                field = move_down(field)
+                field, add_score = move_down(field)
+            score += add_score
             check_empty(field)
             if len(empty_cell) > 0:
                 add_random_number_in_empty_cell(field)
